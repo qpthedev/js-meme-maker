@@ -3,12 +3,17 @@ const ctx = canvas.getContext("2d");
 const lineWidth = document.getElementById("line-width");
 const color = document.getElementById("color");
 const modeBtn = document.getElementById("mode-btn");
+const resetBtn = document.getElementById("reset-btn");
+const eraseBtn = document.getElementById("erase-btn");
 const colorOptions = Array.from(
   document.getElementsByClassName("color-option")
 );
 
-canvas.width = 800;
-canvas.height = 800;
+const CANVAS_WIDTH = 800;
+const CANVAS_HEIGHT = 800;
+
+canvas.width = CANVAS_WIDTH;
+canvas.height = CANVAS_HEIGHT;
 
 ctx.lineWidth = lineWidth.value;
 
@@ -61,8 +66,19 @@ function onModeClick() {
 
 function onCanvasClick() {
   if (isFilling) {
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
   }
+}
+
+function onResetClick() {
+  ctx.fillStyle = "white";
+  ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+}
+
+function onEraseClick() {
+  modeBtn.innerText = "Fill";
+  isFilling = false;
+  ctx.strokeStyle = "white";
 }
 
 canvas.addEventListener("mousemove", onMove);
@@ -77,3 +93,5 @@ color.addEventListener("change", onColorChange);
 colorOptions.forEach((color) => color.addEventListener("click", onColorClick));
 
 modeBtn.addEventListener("click", onModeClick);
+resetBtn.addEventListener("click", onResetClick);
+eraseBtn.addEventListener("click", onEraseClick);
