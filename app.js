@@ -5,6 +5,8 @@ const color = document.getElementById("color");
 const modeBtn = document.getElementById("mode-btn");
 const resetBtn = document.getElementById("reset-btn");
 const eraseBtn = document.getElementById("erase-btn");
+const fileInput = document.getElementById("file");
+const textInput = document.getElementById("text");
 const colorOptions = Array.from(
   document.getElementsByClassName("color-option")
 );
@@ -16,6 +18,7 @@ canvas.width = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT;
 
 ctx.lineWidth = lineWidth.value;
+ctx.lineCap = "round";
 
 let isPainting = false;
 let isFilling = false;
@@ -57,9 +60,11 @@ function onColorClick(event) {
 function onModeClick() {
   if (isFilling) {
     isFilling = false;
+
     modeBtn.innerText = "Fill";
   } else {
     isFilling = true;
+
     modeBtn.innerText = "Draw";
   }
 }
@@ -81,11 +86,35 @@ function onEraseClick() {
   ctx.strokeStyle = "white";
 }
 
+function onFileChange(event) {
+  const file = event.target.files[0];
+  const url = URL.createObjectURL(file);
+  const image = new Image();
+  image.src = url;
+  image.onload = function () {
+    ctx.drawImage(image, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    fileInput.value = "";
+  };
+}
+
+function onDoubleClick(event) {
+  const text = textInput.value;
+
+  if (text !== "") {
+    ctx.save();
+    ctx.lineWidth = 1;
+    ctx.font = "40px Comic Sans MS";
+    ctx.strokeText(text, event.offsetX, event.offsetY);
+    ctx.restore();
+  }
+}
+
 canvas.addEventListener("mousemove", onMove);
 canvas.addEventListener("mousedown", onMouseDown);
 canvas.addEventListener("mouseup", onMouseUp);
 canvas.addEventListener("mouseleave", onMouseUp);
 canvas.addEventListener("click", onCanvasClick);
+canvas.addEventListener("dblclick", onDoubleClick);
 
 lineWidth.addEventListener("change", onLineWidthChange);
 color.addEventListener("change", onColorChange);
@@ -95,3 +124,4 @@ colorOptions.forEach((color) => color.addEventListener("click", onColorClick));
 modeBtn.addEventListener("click", onModeClick);
 resetBtn.addEventListener("click", onResetClick);
 eraseBtn.addEventListener("click", onEraseClick);
+fileInput.addEventListener("change", onFileChange);
